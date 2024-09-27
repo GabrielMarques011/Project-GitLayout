@@ -4,7 +4,7 @@
 }
 
 body{
-    background-color:  rgb(26 26 26);
+    background-color:  #1D2128;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
@@ -12,4 +12,17 @@ hr{
     background-color: white;
     border: 1px solif white;
 }
+
+body::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  body::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  body::-webkit-scrollbar-thumb {
+    background-color: #999999;
+    border-radius: 20px;
+  }
 
