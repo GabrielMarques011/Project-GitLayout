@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Header } from "../../componentes/Header/header";
 import background from "../../assets/background.png"
 import './style.css';
@@ -5,6 +6,29 @@ import { Conteudo } from "../../componentes/Texts";
 
 
 function App() {
+
+  const [user, setUser] = useState('');
+  const [currentUser, setcurrentUser] = useState(null);
+  const [repos, setRepos] = useState(null);
+
+  const getData = async () => {
+    const userData = await fetch(`https://api.github.com/users/${user}`);
+    const newData = await userData.json();
+
+    if(newData.name){
+      const {avatar_url, name, bio, login} = newData;
+      setcurrentUser({avatar_url, name, bio, login});
+
+      const reposData = await fetch(`https://api.github.com/users/${user}/repos`);
+      const newRepos = await reposData.json();
+
+      if(newRepos.length){
+        setRepos(newRepos);
+      }
+
+    }
+  }
+
   return (
     <div className="App">
       <Header/>
@@ -15,29 +39,47 @@ function App() {
         <div className="conteudo-filho">
 
           <div>
-            <input className="inputTop" name="usuario" placeholder="@username"></input>
-            <button className="buttonTop" type="submit">Buscar</button>
+            <input 
+            value={user} 
+            onChange={event => setUser(event.target.value)} 
+            className="inputTop" 
+            name="usuario" 
+            placeholder="@username"></input>
+            <button 
+            onClick={getData}
+            className="buttonTop" 
+            type="submit">Buscar</button>
           </div>
 
-          <div className="conteudoUser">
-            <img src="https://avatars.githubusercontent.com/u/91213127?v=4" className="profile"/>
-            <div className="information">
-              <h3>Gabriel Marques</h3>
-              <p className="user">@gabrielmarques011</p>
-              <p className="text">Olá! Sou um desenvolvedor apaixonado por criar soluções inovadoras e eficientes. Com experiência em HTML, CSS, JavaScript e Java, estou sempre em busca de novos desafios e aprendizados.</p>
+          {currentUser?.name ? ( <>
+
+            <div className="conteudoUser">
+            <img src={currentUser.avatar_url} 
+            className="profile"/>
+            <div 
+            className="information">
+              <h3>{currentUser.name}</h3>
+              <p className="user">@{currentUser.login}</p>
+              <p className="text">{currentUser.bio}</p>
             </div>
-          </div>
+            </div>
 
-          <hr />
+            <hr />
 
-          <div className="conteudoRepositorio">
+            </>): null}
+
+            {repos?.length ? ( <>
+
+            <div className="conteudoRepositorio">
             <h3>Repositório</h3>
-          </div>
+            </div>
 
-          <Conteudo title="Form" descript="Sistema criado para formularios de uma loja de vendas de frutas"/>
-          <Conteudo title="User" descript="Sistema criado para formularios de criação de User"/>
-          <Conteudo title="Sistem-Car" descript="Sistema criado para formularios de uma loja de carros"/>
-          <Conteudo title="Form" descript="Sistema criado para formularios de uma loja de vendas de frutas"/>
+            {repos.map((repo) =>(
+              <Conteudo title={repo.name} descript={repo.description}/>
+            ))}
+
+            </> ) : null}
+          
 
         </div>
 
